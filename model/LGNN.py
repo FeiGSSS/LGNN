@@ -26,16 +26,16 @@ class LGNN_layer(nn.Module):
 
         self.final_layer = final_layer
 
-        self.x2x_1 = nn.Linear(size_Fa*feat_dim_in, feat_dim_out)
-        self.y2x_1 = nn.Linear(2*feat_dim_line_in, feat_dim_out)
+        self.x2x_1 = nn.Linear(size_Fa*feat_dim_in, feat_dim_out, bias=False)
+        self.y2x_1 = nn.Linear(2*feat_dim_line_in, feat_dim_out, bias=False)
         if not self.final_layer:
-            self.x2x_2 = nn.Linear(size_Fa*feat_dim_in, feat_dim_out)
-            self.y2x_2 = nn.Linear(2*feat_dim_line_in, feat_dim_out)
+            self.x2x_2 = nn.Linear(size_Fa*feat_dim_in, feat_dim_out, bias=False)
+            self.y2x_2 = nn.Linear(2*feat_dim_line_in, feat_dim_out, bias=False)
 
-            self.y2y_1 = nn.Linear(size_Fb*feat_dim_line_in, feat_dim_line_out)
-            self.y2y_2 = nn.Linear(size_Fb*feat_dim_line_in, feat_dim_line_out)
-            self.x2y_1 = nn.Linear(4*feat_dim_out, feat_dim_line_out)
-            self.x2y_2 = nn.Linear(4*feat_dim_out, feat_dim_line_out)
+            self.y2y_1 = nn.Linear(size_Fb*feat_dim_line_in, feat_dim_line_out, bias=False)
+            self.y2y_2 = nn.Linear(size_Fb*feat_dim_line_in, feat_dim_line_out, bias=False)
+            self.x2y_1 = nn.Linear(4*feat_dim_out, feat_dim_line_out, bias=False)
+            self.x2y_2 = nn.Linear(4*feat_dim_out, feat_dim_line_out, bias=False)
 
             self.bn_x = nn.BatchNorm1d(2*feat_dim_out)
             self.bn_y = nn.BatchNorm1d(2*feat_dim_line_out)
