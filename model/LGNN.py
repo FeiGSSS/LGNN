@@ -84,7 +84,6 @@ class LGNN_layer(nn.Module):
     def operatorXfeat(self, operators_list, feat):
         feat_out = []
         for A in operators_list:
-
             feat_out.append(torch.sparse.mm(A, feat))
         return torch.cat(feat_out, dim=1) # [N, (J+2)*feat_dim]
             
