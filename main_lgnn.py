@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # dataset setting
     parser.add_argument("--num_examples_train", type=int, default=6000)
-    parser.add_argument("--num_examples_test", type=int, default=100)
+    parser.add_argument("--num_examples_test", type=int, default=1000)
     parser.add_argument("--edge_density", type=float, default=0.2)
     parser.add_argument('--p_SBM', type=float, default=0.0)
     parser.add_argument('--q_SBM', type=float, default=0.045)
@@ -75,9 +75,10 @@ if __name__ == "__main__":
                 J=args.J,
                 num_classes=args.n_classes,
                 device=device)
-
     # Optimizer
     optimizer = torch.optim.Adamax(model.parameters(), lr=args.lr)
+
+    # Training
     losses = []
     acces = []
     t0 = time.time()
@@ -107,6 +108,40 @@ if __name__ == "__main__":
                 pkl.dump([losses, acces], f)
             torch.save(model.state_dict(), args.model_save_path+"model.pt")
 
+    # Testing
+    dataset_test = SBM_dataset(args.p_SBM, 
+                                args.q_SBM, 
+                                graph_size=args.N_train,
+                                n_classes=args.n_classes, 
+                                num_graphs=args.num_examples_test,
+                                J=args.J,
+                                train=False, 
+                                path_root=args.save_path_root, 
+                                save_data=True)
+    dataloader_test = DataLoader(dataset_test, 
+                                  batch_size=1, 
+                                  num_workers=args.num_workers,
+                                  shuffle=True, 
+                                  collate_fn=dataset_test.collate_fn)
+
+    model.eval()
+    acces_test = []
+    t0 = time.time()
+    for cnt, data in enumerate(dataloader_test):
+        inputs = data_convert(data, device)
+        pred = model(inputs) # [N, n_classes]
+        pred = pred[None, :, :]
+        label = torch.Tensor(data["label"])[None, :]
+        acc = compute_accuracy_multiclass(pred, label, args.n_classes)
+
+        acces_test.append(acc.item())
+
+        t1 = time.time()
+        if (cnt+1)%args.show_freq == 0 :
+            ave_acc = np.mean(acces_test[-args.show_freq:])
+            print("Test : {:<3}, ACC={:.4f}, cmu_Time={:.1f}s, iter_Time={:.1f}s".format(cnt, ave_acc, t1-t0, (t1-t0)/(cnt+1)))
+            with open(args.results_save_path+"test_acc.pkl", "wb") as f:
+                pkl.dump(acces_test, f)
 
         
 
