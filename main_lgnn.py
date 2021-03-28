@@ -9,6 +9,7 @@ BNU, Beijing, China
 
 import argparse
 import time
+import numpy as np
 
 import torch
 from torch.utils.data import DataLoader
@@ -39,6 +40,9 @@ if __name__ == "__main__":
     parser.add_argument("--cuda_id", type=int, default=0, help="-1 for cpu")
     parser.add_argument("--torch_seed", type=int, default=42)
     parser.add_argument('--clip_grad_norm', nargs='?', const=1, type=float, default=40.0)
+    # experiments setting
+    parser.add_argument("--show_freq", type=int, default=10)
+    parser.add_argument("--model_save_path", type=str, default="./model_ckp/")
     args = parser.parse_args()
 
     if torch.cuda.is_available() and args.cuda_id>=0:
@@ -92,7 +96,10 @@ if __name__ == "__main__":
         acces.append(acc.item())
 
         t1 = time.time()
-        print("Sample : {:<3}, Loss={:.3f}, ACC={:.4f}, cmu_Time={:.1f}s".format(cnt, loss.item(), acc.item(), t1-t0))
+        if (cnt+1)%args.show_freq == 0 :
+            ave_loss = np.mean(losses[-args.show_freq:])
+            ave_acc = np.mean(acces[-args.show_freq:])
+            print("Sample : {:<3}, Loss={:.3f}, ACC={:.4f}, cmu_Time={:.1f}s".format(cnt, ave_loss, ave_acc, t1-t0))
 
         
 
