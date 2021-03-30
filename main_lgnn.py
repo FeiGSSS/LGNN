@@ -24,8 +24,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # dataset setting
     parser.add_argument("--num_examples_train", type=int, default=6000)
-    parser.add_argument("--num_examples_test", type=int, default=1000)
-    parser.add_argument("--edge_density", type=float, default=0.2)
+    parser.add_argument("--num_examples_test", type=int, default=100)
     parser.add_argument('--p_SBM', type=float, default=0.0)
     parser.add_argument('--q_SBM', type=float, default=0.045)
     parser.add_argument("--N_train", type=int, default=400, help="num of nodes")
@@ -36,7 +35,7 @@ if __name__ == "__main__":
     parser.add_argument("--J", type=int, default=2)
     parser.add_argument('--hid_dim', type=int, default=8)
     parser.add_argument('--num_layers', type=int, default=30)
-    parser.add_argument("--lr", type=float, default=4e-3)
+    parser.add_argument("--lr", type=float, default=0.004)
     # pytorch setting                           #
     parser.add_argument("--cuda_id", type=int, default=0, help="-1 for cpu")
     parser.add_argument("--num_workers", type=int, default=15, help="number of workers for data loader")
